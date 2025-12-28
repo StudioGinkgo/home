@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Studio Ginkgo</title>
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;900&family=Noto+Sans+KR:wght@300;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -59,7 +60,7 @@
 
         /* --- 히어로 섹션 --- */
         .hero {
-            height: 80vh;
+            height: 60vh;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -205,6 +206,17 @@
             font-size: 0.8rem;
             border-top: 1px solid #222;
         }
+        
+        /* 동영상 배경 스타일 */
+        .hero-bg-video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* 중요: 영상을 화면에 꽉 차게 자름 (background-size: cover와 동일) */
+            z-index: 0;        /* 텍스트 뒤로 보냄 */
+        }
     </style>
 </head>
 <body>
@@ -217,12 +229,14 @@
     </header>
 
     <section class="hero">
-        <div class="hero-overlay"></div>
-        <div style="position:absolute; width:100%; height:100%; background: url('https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=2070') center/cover; z-index:0;"></div>
-        
+        <div class="hero-overlay"></div> <video autoplay muted loop playsinline class="hero-bg-video">
+        <source src="hero_video.mp4" type="video/mp4">
+        Your browser does not support the video.
+    </video>
+
         <div class="hero-content">
-            <h1>IMMERSION<br><span class="text-accent">BEYOND</span> REALITY</h1>
-            <p>Studio Ginkgo crafts unforgettable gaming experiences.</p>
+            <h1>YOUR <span class="text-accent">PRIVATE</span> <br>PLAYGROUND</h1>
+            <p>Purely for Pleasure.</p>
         </div>
     </section>
 
