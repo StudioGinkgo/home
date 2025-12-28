@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Studio Ginkgo</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;900&family=Noto+Sans+KR:wght@300;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* --- 기본 설정 --- */
+        :root {
+            --primary-bg: #121212;
+            --accent: #E3C565;
+            --steam: #1b2838;
+            --humble: #cb2d3e;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Montserrat', 'Noto Sans KR', sans-serif;
+            background-color: var(--primary-bg);
+            color: #ffffff;
+            line-height: 1.6;
+        }
+        a { text-decoration: none; color: inherit; transition: 0.3s; }
+
+        /* --- 유틸리티 --- */
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+        .text-accent { color: var(--accent); }
+
+        /* --- 헤더 --- */
+        header {
+            padding: 20px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: absolute;
+            width: 100%;
+            z-index: 1000;
+            background: transparent;
+        }
+        /* 기존 .logo 스타일은 그대로 유지 */
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 900;
+            display: flex;
+            align-items: center;
+            gap: 15px; /* 이미지와 텍스트 사이 간격 (조절 가능) */
+            margin-top: 20px;
+        }
+
+        /* 새로 추가할 이미지 스타일 */
+        .logo-icon {
+            height: 40px; /* 로고 높이 (텍스트 크기에 맞춰 조절하세요) */
+            width: auto;  /* 비율 자동 유지 */
+            object-fit: contain; /* 찌그러짐 방지 */
+        }
+
+        /* --- 히어로 섹션 --- */
+        .hero {
+            height: 80vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            position: relative;
+            background: #000;
+            overflow: hidden;
+        }
+        .hero-overlay {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1;
+        }
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            padding: 20px;
+        }
+        .hero h1 {
+            font-size: 4rem;
+            line-height: 1.1;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+        }
+        .hero p {
+            font-size: 1.2rem;
+            color: #ddd;
+            max-width: 700px;
+            margin: 0 auto;
+            font-weight: 300;
+        }
+
+        /* --- 게임 리스트 --- */
+        .games-section { padding: 80px 0; background: #121212; }
+        .section-title {
+            text-align: center;
+            font-size: 2rem;
+            margin-bottom: 60px;
+            color: var(--accent);
+            text-transform: uppercase;
+        }
+
+        .game-card {
+            position: relative;
+            width: 100%;
+            height: 450px;
+            margin-bottom: 60px;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.7);
+            background: #222;
+            transition: transform 0.3s ease;
+        }
+        .game-card:hover { transform: translateY(-5px); }
+
+        /* 배경 이미지 */
+        .game-visual {
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            transition: transform 0.5s ease;
+        }
+        .game-card:hover .game-visual { transform: scale(1.03); }
+
+        /* [핵심] 카드 전체를 클릭 가능하게 하는 투명 링크 (Layer 1) */
+        .card-link-overlay {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 1; /* 배경보다 위, 버튼보다 아래 */
+        }
+
+        /* 정보 영역 */
+        .game-info-layer {
+            position: absolute;
+            bottom: 0; left: 0; width: 100%;
+            background: linear-gradient(to top, rgba(0,0,0,1) 10%, rgba(0,0,0,0.8) 50%, transparent);
+            padding: 40px 30px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            flex-wrap: wrap;
+            gap: 20px;
+            pointer-events: none; /* 오버레이가 클릭을 가로채지 않게 하기 위해 */
+        }
+
+        .info-text { pointer-events: none; } /* 텍스트는 클릭 통과 */
+
+        .info-text .genre {
+            color: var(--accent);
+            font-size: 0.8rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+        .info-text h3 {
+            font-size: 2rem;
+            font-weight: 900;
+            color: #fff;
+        }
+
+        /* [핵심] 스토어 버튼 그룹 (Layer 2) - 카드 링크보다 위에 있어야 함 */
+        .store-buttons {
+            display: flex;
+            gap: 10px;
+            pointer-events: auto; /* 버튼은 클릭 가능해야 함 */
+            position: relative;
+            z-index: 2; /* 오버레이보다 위 */
+        }
+        .btn-store {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 18px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: #fff;
+            background-color: rgba(255,255,255,0.1); 
+            border: 1px solid rgba(255,255,255,0.2);
+            transition: 0.2s;
+        }
+        .btn-store:hover { background-color: #333; border-color: #fff; }
+        
+        /* 버튼별 고유 색상 */
+        .btn-steam:hover { border-color: #66c0f4; color: #66c0f4; }
+        .btn-humble:hover { border-color: #cc2929; color: #cc2929; }
+
+        /* 모바일 대응 */
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 2.5rem; }
+            .game-info-layer { flex-direction: column; align-items: flex-start; }
+            .store-buttons { width: 100%; }
+            .btn-store { flex: 1; justify-content: center; }
+        }
+        
+        footer {
+            text-align: center;
+            padding: 50px 0;
+            color: #666;
+            font-size: 0.8rem;
+            border-top: 1px solid #222;
+        }
+    </style>
+</head>
+<body>
+
+    <header class="container">
+        <div class="logo">
+            <img src="logo.png" alt="Studio Ginkgo Logo" class="logo-icon">
+            STUDIO GINKGO
+        </div>
+    </header>
+
+    <section class="hero">
+        <div class="hero-overlay"></div>
+        <div style="position:absolute; width:100%; height:100%; background: url('https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=2070') center/cover; z-index:0;"></div>
+        
+        <div class="hero-content">
+            <h1>IMMERSION<br><span class="text-accent">BEYOND</span> REALITY</h1>
+            <p>Studio Ginkgo crafts unforgettable gaming experiences.</p>
+        </div>
+    </section>
+
+    <section class="games-section container">
+        <h2 class="section-title">Our Projects</h2>
+
+        <div class="game-card">
+            <div class="game-visual" style="background-image: url('https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=2070');"></div>
+            
+            <a href="https://youtu.be/dummy-link" target="_blank" class="card-link-overlay" title="View Detail"></a>
+
+            <div class="game-info-layer">
+                <div class="info-text">
+                    <div class="genre">Action Roguelite</div>
+                    <h3>Project: Slash</h3>
+                </div>
+                
+                <div class="store-buttons">
+                    <a href="https://store.steampowered.com/" target="_blank" class="btn-store btn-steam">
+                        <i class="fa-brands fa-steam"></i> Steam
+                    </a>
+                    <a href="https://www.humblebundle.com/store" target="_blank" class="btn-store btn-humble">
+                        <i class="fa-solid fa-gamepad"></i> Humble
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="game-card">
+            <div class="game-visual" style="background-image: url('https://images.unsplash.com/photo-1511512578047-dfb367046420?q=80&w=2071');"></div>
+            
+            <a href="#" class="card-link-overlay"></a>
+
+            <div class="game-info-layer">
+                <div class="info-text">
+                    <div class="genre">Puzzle Adventure</div>
+                    <h3>Lost in Ginkgo</h3>
+                </div>
+                <div class="store-buttons">
+                    <a href="#" target="_blank" class="btn-store btn-steam">
+                        <i class="fa-brands fa-steam"></i> Steam
+                    </a>
+                </div>
+            </div>
+        </div>
+
+    </section>
+
+    <footer>
+        <div class="container">
+            <p><a href="mailto:ginkgost@gmail.com">Contact: ginkgost@gmail.com</a></p>
+            <p>&copy; 2025 Studio Ginkgo. All rights reserved.</p>
+        </div>
+    </footer>
+
+</body>
+</html>
